@@ -1,0 +1,74 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+<div class="container mt-4">
+<h4 class="mt-4">All Posts</h4>
+
+	{% if user.is_authenticated %}
+<div class="new-post-box p-3 mb-4 border rounded bg-light">
+	<h6>New Post</h6>
+	<form action="{% url 'index' %}" method="POST">
+			{% csrf_token %}
+			<textarea name="content" rows="3" class="form-control mb-2" required></textarea>
+			<button type="submit" class="btn btn-primary btn-small mt-2">Post</button>
+	</form>
+	{% if messages %}
+    <div class="alert-container mt-3">
+        {% for message in messages %}
+            <div class="alert alert-warning">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+		{% endif %}
+</div>
+{% endif %}
+
+
+{% for post in posts_page %}
+<div class="post-box mb-3 p-3 border rounded bg-white shadow-sm" id="post-{{ post.id }}">
+	<strong>
+		<a href="{% url 'profile' post.user.username %}">
+			{{ post.user.username }}
+		</a>
+	</strong>
+	<p id="post-content-{{ post.id }}">{{ post.content }}</p>
+	<small>{{ post.timestamp }}</small>
+
+	{% if user.is_authenticated and user == post.user %}
+		<button class="edit-btn btn btn-link p-0" data-id="{{ post.id }}">📝</button>
+	{% endif %}
+
+	<button class="btn-like btn btn-link p-0" data-id="{{ post.id }}" {% if not user.is_authenticated %}disabled{% endif %}>
+    <span class="heart-icon">
+        {% if user.is_authenticated and post.liked %}
+            ❤️
+        {% else %}
+            🤍
+        {% endif %}
+    </span>
+		{% if post.likes_count > 0 %}
+    <span class="like-count">{{ post.likes_count }}</span>
+		{% endif %}
+	</button>
+
+</div>
+
+{% empty %}
+<p>No posts yet.</p>   
+{% endfor %}
+
+
+<nav aria-label="page navigation">
+	<ul class="pagination d-flex justify-content-center">
+		{% if posts_page.has_previous %}
+			<li class="page-item"><a class="page-link" href="?page={{ posts_page.previous_page_number }}">Previous</a></li>
+		{% endif %}
+		{% if posts_page.has_next %}
+			<li class="page-item"><a class="page-link" href="?page={{ posts_page.next_page_number }}">Next</a></li>
+		{% endif %}
+	</ul>
+</nav>
+</div>
+{% endblock %}
+

@@ -1,0 +1,58 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+{% if user.is_authenticated %}
+<div class="container mt-4">
+<h4 class="mt-4">Following Feed</h4>
+<hr>
+
+
+{% for post in posts_page %}
+<div class="post-box mt-3 p-3 border rounded bg-white shadow-sm" id="post-{{ post.id }}">
+	<strong>
+		<a href="{% url 'profile' post.user.username %}">
+			{{ post.user.username }}
+		</a>
+	</strong>
+	<p id="post-content-{{ post.id }}">{{ post.content }}</p>
+	<small>{{ post.timestamp }}</small>
+
+  {% if user.is_authenticated and user == post.user %}
+		<button class="btn btn-sm btn-outline-secondary edit-btn" data-id="{{ post.id }}">📝</button>
+	{% endif %}
+
+	
+	<button class="btn-like btn btn-link p-0" data-id="{{ post.id }}">
+    <span class="heart-icon">
+        {% if post.liked %}
+            ❤️
+        {% else %}
+            🤍
+        {% endif %}
+    </span>
+		{% if post.likes_count > 0 %}
+    <span class="like-count">{{ post.likes_count }}</span>
+		{% endif %}
+</button>
+
+
+</div>
+
+{% empty %}
+<p>No posts yet.</p>   
+{% endfor %}
+
+
+<nav aria-label="Page navigation">
+	<ul class="pagination d-flex justify-content-center">
+		{% if posts_page.has_previous %}
+			<li class="page-item"><a class="page-link" href="?page={{ posts_page.previous_page_number }}">Previous</a></li>
+		{% endif %}
+		{% if posts_page.has_next %}
+			<li class="page-item"><a class="page-link" href="?page={{ posts_page.next_page_number }}">Next</a></li>
+		{% endif %}
+	</ul>
+</nav>
+</div>
+{% endif %}
+{% endblock %}

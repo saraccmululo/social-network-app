@@ -1,0 +1,11 @@
+.btn-like, .edit-btn {
+  text-decoration: none;
+}
+.btn-like:focus,
+.btn-like:active,
+.btn-like:hover,
+.edit-btn:focus,
+.edit-btn:active,
+.edit-btn:hover {
+  text-decoration: none;
+}
